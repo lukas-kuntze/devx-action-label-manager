@@ -96,12 +96,12 @@ config_file: organization/shared-configs/repository-labels.yml
 
 ### Inputs
 
-| Input | Description | Default | Required |
-|-------|-------------|---------|----------|
-| `github_token` | GitHub token for authentication | – | **Yes** |
-| `config_file` | Path to YAML configuration file | `.github/config/repository-labels.yml` | No |
-| `delete_missing` | Delete labels not defined in config | `false` | No |
-| `github_api_url` | GitHub API URL (for Enterprise Server) | `https://api.github.com` | No |
+| Input            | Description                            | Default                                | Required |
+|------------------|----------------------------------------|----------------------------------------|----------|
+| `config_file`    | Path to YAML configuration file        | `.github/config/repository-labels.yml` | No       |
+| `delete_missing` | Delete labels not defined in config    | `false`                                | No       |
+| `github_token`   | GitHub token for authentication        | –                                      | **Yes**  |
+| `github_api_url` | GitHub API URL (for Enterprise Server) | `https://api.github.com`               | No       |
 
 ### Outputs
 

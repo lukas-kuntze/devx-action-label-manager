@@ -1,0 +1,27 @@
+name: Synchronize Labels
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/config/repository-labels.yml'
+  schedule:
+    - cron: '0 2 1 * *'
+  workflow_dispatch:
+
+jobs:
+  synchronize-labels:
+    name: Synchronize Repository Labels
+    permissions:
+      contents: read
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Apply Label Configuration
+        uses: ./
+        with:
+          config_file: .github/config/repository-labels.yml
+          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,130 @@
+import * as core from '@actions/core';
+
+import { ActionInputs, Label, LabelConfig } from '../types';
+
+/** Maximum allowed length for a label name. */
+const MAX_LABEL_NAME_LENGTH = 50;
+
+/** Maximum allowed length for a label description before GitHub truncates it. */
+const MAX_LABEL_DESCRIPTION_LENGTH = 100;
+
+/** Regular expression for validating 6-digit hex color codes. */
+const HEX_COLOR_REGEX = /^[0-9A-Fa-f]{6}$/;
+
+/**
+ * Validates a hex color code.
+ *
+ * @param color - Color value to validate (with or without '#')
+ * @returns Hex color without the leading '#'
+ * @throws Error if the value is not a valid hex color
+ */
+export function validateColor(color: string): string {
+  const cleanColor = color.replace(/^#/, '');
+
+  if (!HEX_COLOR_REGEX.test(cleanColor)) {
+    throw new Error(`Invalid color code: "${color}". Expected a 6-digit hex value (e.g. "#FF0000" or "FF0000").`);
+  }
+
+  return cleanColor.toUpperCase();
+}
+
+/**
+ * Validates a label name.
+ *
+ * @param name - Label name to validate
+ * @throws Error if the name is invalid
+ */
+export function validateLabelName(name: string): void {
+  if (!name || name.trim().length === 0) {
+    throw new Error('Label name cannot be empty.');
+  }
+
+  if (name.length > MAX_LABEL_NAME_LENGTH) {
+    throw new Error(`Label name "${name}" is too long. Maximum length is ${MAX_LABEL_NAME_LENGTH} characters.`);
+  }
+}
+
+/**
+ * Validates a single label configuration.
+ *
+ * @param label - The label to validate
+ * @param index - The index of the label in the array (for error messages)
+ * @throws Error if the label is invalid
+ */
+export function validateLabel(label: Label, index: number): void {
+  if (!label.name) {
+    throw new Error(`Label at index ${index} is missing the "name" field.`);
+  }
+
+  if (!label.color) {
+    throw new Error(`Label "${label.name}" is missing the "color" field.`);
+  }
+
+  validateLabelName(label.name);
+
+  try {
+    validateColor(label.color);
+  } catch (error) {
+    throw new Error(`Error in label "${label.name}": ${(error as Error).message}`);
+  }
+
+  if (label.description && label.description.length > MAX_LABEL_DESCRIPTION_LENGTH) {
+    core.warning(
+      `Label "${label.name}" has a description over ${MAX_LABEL_DESCRIPTION_LENGTH} characters. GitHub may truncate it.`
+    );
+  }
+}
+
+/**
+ * Validates the entire label configuration.
+ *
+ * @param config - Label configuration to validate
+ * @throws Error if the configuration is invalid
+ */
+export function validateLabelConfig(config: LabelConfig): void {
+  if (!config) {
+    throw new Error('Configuration must not be null or undefined.');
+  }
+
+  if (!config.labels) {
+    throw new Error('Configuration is missing the required "labels" array.');
+  }
+
+  if (!Array.isArray(config.labels)) {
+    throw new TypeError('Configuration property "labels" must be an array.');
+  }
+
+  if (config.labels.length === 0) {
+    core.warning('Configuration does not contain any labels.');
+    return;
+  }
+
+  config.labels.forEach((label, index) => {
+    validateLabel(label, index);
+  });
+
+  const labelNames = config.labels.map((l) => l.name.toLowerCase());
+  const duplicates = labelNames.filter((name, index) => labelNames.indexOf(name) !== index);
+
+  if (duplicates.length > 0) {
+    throw new Error(`Duplicate label names detected: ${[...new Set(duplicates)].join(', ')}.`);
+  }
+
+  core.info(`Configuration validated successfully: ${config.labels.length} labels found.`);
+}
+
+/**
+ * Validates the action inputs.
+ *
+ * @param inputs - The action inputs to validate
+ * @throws Error if the inputs are invalid
+ */
+export function validateInputs(inputs: ActionInputs): void {
+  if (!inputs.configFile || inputs.configFile.trim().length === 0) {
+    throw new Error('Input "config_file" must not be empty.');
+  }
+
+  if (!inputs.githubToken || inputs.githubToken.trim().length === 0) {
+    throw new Error('Input "github_token" must not be empty.');
+  }
+}

@@ -1,0 +1,47 @@
+name: 'GitHub Label Manager'
+description: 'Automatically creates, updates, and manages GitHub labels based on a YAML configuration file.'
+author: 'Lukas Kuntze'
+
+branding:
+  icon: 'tag'
+  color: 'purple'
+
+inputs:
+  config_file:
+    description: 'Path to the YAML configuration file containing label definitions.'
+    default: '.github/config/repository-labels.yml'
+    required: false
+
+  delete_missing:
+    description: 'If true, removes labels from the repository that are not defined in the config file. Use with caution!'
+    default: 'false'
+    required: false
+
+  github_api_url:
+    description: 'Base URL of the GitHub API (used for GitHub Enterprise Server).'
+    default: 'https://api.github.com'
+    required: false
+
+  github_token:
+    description: 'GitHub token used for authenticating API requests.'
+    required: true
+
+outputs:
+  labels_created:
+    description: 'Number of labels that were created.'
+
+  labels_deleted:
+    description: 'Number of labels that were deleted.'
+
+  labels_ignored:
+    description: 'Number of labels skipped due to the ignore flag in the config.'
+
+  labels_skipped:
+    description: 'Number of labels that were already up-to-date (no changes needed).'
+
+  labels_updated:
+    description: 'Number of labels that were updated.'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

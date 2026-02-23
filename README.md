@@ -170,6 +170,6 @@ labels:
 ## Additional Resources
 
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
-- [GitHub Labels API](https://docs.github.com/en/rest/issues/labels)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [GitHub Labels API](https://docs.github.com/en/rest/issues/labels)
 - [YAML Syntax](https://yaml.org/spec/1.2.2/)

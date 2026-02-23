@@ -141,11 +141,11 @@ A valid PR should also include:
 - The issue reference (e.g., `Fixes: #42`)  
 - Confirmation that no secrets (tokens, passwords, etc.) are included  
 
-Refer to the [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md) for the exact structure.
+Refer to the [Pull Request Template](.github/pull_request_template.md) for the exact structure.
 
 ---
 
 ## Questions
 
 If you have questions, feedback, or ideas for improvement:  
-Please open a [discussion](../../discussions) or create an [issue](../../issues).
+Please create an [issue](../../issues).
